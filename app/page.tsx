@@ -11,7 +11,7 @@ type Message = { role: "user" | "assistant"; content: string };
 type Stock = { symbol: string; price: number; change: number; changePct: number };
 type View = "WATCHLIST" | "CHART" | "ANALYSIS" | "CHAT";
 
-const QUICK_PROMPTS = ["Analyze NVDA", "Best stocks today?", "Explain RSI", "Bull vs Bear"];
+const QUICK_PROMPTS = ["Analyze NVDA", "Market trends?", "Explain RSI", "Best stocks?"];
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -22,7 +22,6 @@ export default function Home() {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [selected, setSelected] = useState("AAPL");
   const [view, setView] = useState<View>("CHART");
-  const [showInput, setShowInput] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const selectedStock = stocks.find((s) => s.symbol === selected);
@@ -41,7 +40,7 @@ export default function Home() {
     const stockInterval = setInterval(() =>
       fetch("/api/stocks").then((r) => r.json()).then((d) => setStocks(d.stocks || [])), 60000);
 
-    const tick = () => setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+    const tick = () => setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
     tick();
     const t = setInterval(tick, 1000);
     return () => { clearInterval(t); clearInterval(stockInterval); };
@@ -55,7 +54,6 @@ export default function Home() {
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setInput("");
     setLoading(true);
-    setShowInput(false);
 
     const res = await fetch("/api/chat", {
       method: "POST",
@@ -73,207 +71,134 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[var(--bg)] overflow-hidden">
-      <div className="scanline" />
-
-      {/* Compact Header */}
-      <header className="flex items-center justify-between px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-          <span className="text-[var(--accent)] font-bold tracking-widest text-xs glow-text">NEWLY</span>
+    <div className="flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <header className="glass-card m-3 mb-0 p-4 flex items-center justify-between shrink-0 fade-in">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white">
+            N
+          </div>
+          <div>
+            <h1 className="text-lg font-bold gradient-text">NEWLY</h1>
+            <p className="text-xs text-slate-400">Trading Terminal</p>
+          </div>
         </div>
         {selectedStock && view !== "WATCHLIST" && (
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-[var(--accent)] font-bold">{selectedStock.symbol}</span>
-            <span className="text-[var(--text)] font-bold">${selectedStock.price.toFixed(2)}</span>
-            <span className={`text-xs font-bold ${isPositive ? "text-[var(--accent2)]" : "text-[var(--red)]"}`}>
-              {isPositive ? "▲" : "▼"} {Math.abs(selectedStock.changePct).toFixed(2)}%
-            </span>
+          <div className="hidden md:flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-sm font-bold">{selectedStock.symbol}</div>
+              <div className="text-xs text-slate-400">Live Price</div>
+            </div>
+            <div className="text-right">
+              <div className="text-xl font-bold">${selectedStock.price.toFixed(2)}</div>
+              <div className={`text-sm font-semibold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+                {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
+              </div>
+            </div>
           </div>
         )}
-        <span className="text-[var(--accent2)] font-bold text-xs cursor">{time}</span>
+        <div className="flex items-center gap-3">
+          <div className="status-dot online" />
+          <span className="text-sm font-mono text-slate-400">{time}</span>
+        </div>
       </header>
 
-      {/* Ticker - hide on mobile when not on watchlist */}
+      {/* Ticker */}
       <div className={view === "WATCHLIST" ? "block" : "hidden lg:block"}>
         <StockTicker />
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden relative">
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden p-3 pt-2">
         
-        {/* WATCHLIST VIEW */}
-        <div className={`absolute inset-0 overflow-y-auto ${view === "WATCHLIST" ? "block" : "hidden"}`}>
-          <div className="p-3 space-y-2">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[var(--accent)] tracking-widest">WATCHLIST</h2>
-              <span className="text-xs text-[var(--muted)]">{stocks.length} stocks</span>
-            </div>
-            {stocks.map((s) => (
-              <div
-                key={s.symbol}
-                onClick={() => { setSelected(s.symbol); setView("CHART"); }}
-                className={`panel p-3 cursor-pointer transition-all active:scale-95 ${
-                  selected === s.symbol ? "border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-[var(--accent)]">{s.symbol}</span>
-                  <span className={`text-sm font-bold ${s.change >= 0 ? "text-[var(--accent2)]" : "text-[var(--red)]"}`}>
-                    {s.change >= 0 ? "+" : ""}{s.changePct.toFixed(2)}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-[var(--text)]">${s.price.toFixed(2)}</span>
-                  <span className={`text-xs ${s.change >= 0 ? "text-[var(--accent2)]" : "text-[var(--red)]"}`}>
-                    {s.change >= 0 ? "▲" : "▼"} ${Math.abs(s.change).toFixed(2)}
-                  </span>
-                </div>
+        {/* Mobile Views */}
+        <div className="lg:hidden h-full">
+          {/* WATCHLIST */}
+          {view === "WATCHLIST" && (
+            <div className="h-full overflow-y-auto space-y-2 slide-up">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold">Watchlist</h2>
+                <span className="badge badge-success">{stocks.length} stocks</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CHART VIEW */}
-        <div className={`absolute inset-0 flex flex-col ${view === "CHART" ? "flex" : "hidden"}`}>
-          <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
-            <span className="text-xs font-bold text-[var(--accent)]">{selected}</span>
-            <span className="text-[9px] text-[var(--muted)] tracking-widest">CANDLESTICK · EMA · VOL</span>
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
-          </div>
-        </div>
-
-        {/* ANALYSIS VIEW */}
-        <div className={`absolute inset-0 overflow-y-auto ${view === "ANALYSIS" ? "block" : "hidden"}`}>
-          <div className="p-3">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[var(--accent)] tracking-widest">STRATEGY ANALYSIS</h2>
-              <span className="text-xs text-[var(--muted)]">{selected}</span>
-            </div>
-            <AnalysisPanel symbol={selected} />
-          </div>
-        </div>
-
-        {/* CHAT VIEW */}
-        <div className={`absolute inset-0 flex flex-col ${view === "CHAT" ? "flex" : "hidden"}`}>
-          <div className="px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
-            <h2 className="text-xs font-bold text-[var(--accent)] tracking-widest">AI ANALYST</h2>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-3">
-            {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-                <div className="text-4xl glow-text text-[var(--accent)]">◈</div>
-                <p className="text-[var(--muted)] text-xs tracking-widest">AI TRADING ANALYST</p>
-                <p className="text-[var(--muted)] text-[10px]">Ask about stocks, markets, strategies</p>
-                <div className="flex flex-wrap gap-2 justify-center mt-2">
-                  {QUICK_PROMPTS.map((p) => (
-                    <button key={p} onClick={() => sendMessage(p)}
-                      className="text-xs px-3 py-2 border border-[var(--accent)]/30 text-[var(--accent)] rounded-lg hover:bg-[var(--accent)]/10 transition-all active:scale-95">
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {messages.map((msg, i) => <ChatBubble key={i} role={msg.role} content={msg.content} />)}
-            {loading && (
-              <div className="flex justify-start mb-2">
-                <div className="border border-[var(--accent2)]/20 bg-[var(--accent2)]/5 px-4 py-2 rounded-tr-xl rounded-bl-xl rounded-br-xl text-xs text-[var(--accent2)] animate-pulse">
-                  ◈ ANALYZING...
-                </div>
-              </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-
-          {/* Quick prompts */}
-          <div className="flex gap-2 px-3 py-2 border-t border-[var(--border)] overflow-x-auto shrink-0">
-            {QUICK_PROMPTS.map((p) => (
-              <button key={p} onClick={() => sendMessage(p)}
-                className="text-[10px] px-3 py-1 border border-[var(--border)] text-[var(--muted)] rounded whitespace-nowrap hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all shrink-0 active:scale-95">
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop Layout (lg+) */}
-        <div className="hidden lg:flex absolute inset-0">
-          {/* Left: Watchlist */}
-          <div className="w-56 border-r border-[var(--border)] flex flex-col overflow-hidden">
-            <div className="px-3 py-2 border-b border-[var(--border)] shrink-0">
-              <span className="text-[10px] text-[var(--accent)] font-bold tracking-widest">WATCHLIST</span>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {stocks.map((s) => (
+              {stocks.map((s, i) => (
                 <div
                   key={s.symbol}
-                  onClick={() => setSelected(s.symbol)}
-                  className={`flex flex-col px-3 py-2 cursor-pointer border-b border-[var(--border)]/50 transition-all ${
-                    selected === s.symbol ? "bg-[var(--accent)]/10 border-l-2 border-l-[var(--accent)]" : "hover:bg-white/5"
-                  }`}
+                  onClick={() => { setSelected(s.symbol); setView("CHART"); }}
+                  className={`stock-card ${selected === s.symbol ? "active" : ""}`}
+                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-[var(--accent)]">{s.symbol}</span>
-                    <span className={`text-[10px] font-bold ${s.change >= 0 ? "text-[var(--accent2)]" : "text-[var(--red)]"}`}>
-                      {s.change >= 0 ? "+" : ""}{s.changePct.toFixed(2)}%
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-base font-bold">{s.symbol}</span>
+                    <span className={`badge ${s.change >= 0 ? "badge-success" : "badge-danger"}`}>
+                      {s.change >= 0 ? "↑" : "↓"} {Math.abs(s.changePct).toFixed(2)}%
                     </span>
                   </div>
-                  <span className="text-xs text-[var(--text)] mt-0.5">${s.price.toFixed(2)}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold">${s.price.toFixed(2)}</span>
+                    <span className={`text-sm ${s.change >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {s.change >= 0 ? "+" : ""}${s.change.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          )}
 
-          {/* Center: Chart */}
-          <div className="flex-1 flex flex-col overflow-hidden border-r border-[var(--border)]">
-            <div className="flex items-center justify-between px-3 py-1.5 border-b border-[var(--border)] shrink-0 bg-[var(--panel)]">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[var(--accent)]">{selected}</span>
-                {selectedStock && (
-                  <>
-                    <span className="text-xs text-[var(--text)]">${selectedStock.price.toFixed(2)}</span>
-                    <span className={`text-xs ${isPositive ? "text-[var(--accent2)]" : "text-[var(--red)]"}`}>
-                      {isPositive ? "▲" : "▼"} {Math.abs(selectedStock.changePct).toFixed(2)}%
-                    </span>
-                  </>
-                )}
+          {/* CHART */}
+          {view === "CHART" && (
+            <div className="h-full flex flex-col slide-up">
+              <div className="glass-card p-3 mb-2 flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-bold">{selected}</div>
+                  {selectedStock && (
+                    <div className="text-sm text-slate-400">
+                      ${selectedStock.price.toFixed(2)} 
+                      <span className={`ml-2 ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+                        {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <span className="badge badge-warning">Live</span>
               </div>
-              <span className="text-[10px] text-[var(--muted)] tracking-widest">CANDLESTICK · EMA 50/100/200 · VOLUME</span>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
-            </div>
-          </div>
-
-          {/* Right: Analysis + Chat */}
-          <div className="w-80 xl:w-96 flex flex-col overflow-hidden">
-            <div className="border-b border-[var(--border)] overflow-y-auto max-h-[45%]">
-              <div className="px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] sticky top-0">
-                <span className="text-[10px] text-[var(--accent)] font-bold tracking-widest">STRATEGY · {selected}</span>
-              </div>
-              <div className="p-2">
-                <AnalysisPanel symbol={selected} />
+              <div className="flex-1 chart-container">
+                <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
               </div>
             </div>
+          )}
 
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <div className="px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
-                <span className="text-[10px] text-[var(--accent)] font-bold tracking-widest">AI ANALYST</span>
+          {/* ANALYSIS */}
+          {view === "ANALYSIS" && (
+            <div className="h-full overflow-y-auto slide-up">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold">Strategy Analysis</h2>
+                <span className="text-sm text-slate-400">{selected}</span>
+              </div>
+              <AnalysisPanel symbol={selected} />
+            </div>
+          )}
+
+          {/* CHAT */}
+          {view === "CHAT" && (
+            <div className="h-full flex flex-col slide-up">
+              <div className="glass-card p-3 mb-2">
+                <h2 className="text-base font-bold">AI Trading Assistant</h2>
+                <p className="text-xs text-slate-400">Powered by Groq AI</p>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-3">
+              <div className="flex-1 overflow-y-auto glass-card p-3 mb-2">
                 {messages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-                    <div className="text-3xl glow-text text-[var(--accent)]">◈</div>
-                    <p className="text-[var(--muted)] text-[10px] tracking-widest">AI ANALYST READY</p>
-                    <div className="flex flex-wrap gap-1.5 justify-center mt-1">
+                  <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl float">
+                      🤖
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold mb-1">AI Assistant Ready</h3>
+                      <p className="text-sm text-slate-400">Ask me anything about stocks and trading</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2 justify-center">
                       {QUICK_PROMPTS.map((p) => (
-                        <button key={p} onClick={() => sendMessage(p)}
-                          className="text-[10px] px-2 py-1 border border-[var(--accent)]/30 text-[var(--accent)] rounded hover:bg-[var(--accent)]/10 transition-all">
+                        <button key={p} onClick={() => sendMessage(p)} className="btn-secondary text-xs py-2">
                           {p}
                         </button>
                       ))}
@@ -282,38 +207,124 @@ export default function Home() {
                 )}
                 {messages.map((msg, i) => <ChatBubble key={i} role={msg.role} content={msg.content} />)}
                 {loading && (
-                  <div className="flex justify-start mb-2">
-                    <div className="border border-[var(--accent2)]/20 bg-[var(--accent2)]/5 px-3 py-1.5 rounded-tr-xl rounded-bl-xl rounded-br-xl text-[10px] text-[var(--accent2)] animate-pulse">
-                      ◈ ANALYZING...
-                    </div>
+                  <div className="flex items-center gap-2 p-3 glass-card mb-2">
+                    <div className="spinner" />
+                    <span className="text-sm text-slate-400">Analyzing...</span>
                   </div>
                 )}
                 <div ref={bottomRef} />
               </div>
 
-              <div className="flex gap-1 px-2 py-1 border-t border-[var(--border)] overflow-x-auto shrink-0">
-                {QUICK_PROMPTS.map((p) => (
-                  <button key={p} onClick={() => sendMessage(p)}
-                    className="text-[9px] px-2 py-0.5 border border-[var(--border)] text-[var(--muted)] rounded whitespace-nowrap hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all shrink-0">
-                    {p}
-                  </button>
-                ))}
+              <div className="glass-card p-3 flex gap-2">
+                <input
+                  className="flex-1"
+                  placeholder="Ask about any stock..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                />
+                <button onClick={() => sendMessage()} disabled={loading} className="btn-primary">
+                  Send
+                </button>
               </div>
+            </div>
+          )}
+        </div>
 
-              <div className="flex gap-2 p-2 border-t border-[var(--border)] shrink-0">
-                <div className="flex-1 flex items-center border border-[var(--border)] rounded bg-black/30 px-2 focus-within:border-[var(--accent)] transition-all">
-                  <span className="text-[var(--accent)] text-xs mr-1.5">▶</span>
-                  <input
-                    className="flex-1 bg-transparent text-xs text-[var(--text)] outline-none py-1.5 placeholder:text-[var(--muted)]"
-                    placeholder="Ask about any stock..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                  />
+        {/* Desktop Layout */}
+        <div className="hidden lg:grid lg:grid-cols-12 lg:gap-3 h-full">
+          {/* Left: Watchlist */}
+          <div className="col-span-3 glass-card p-4 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Watchlist</h2>
+              <span className="badge badge-success">{stocks.length}</span>
+            </div>
+            <div className="space-y-2">
+              {stocks.map((s) => (
+                <div
+                  key={s.symbol}
+                  onClick={() => setSelected(s.symbol)}
+                  className={`stock-card ${selected === s.symbol ? "active" : ""}`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-bold">{s.symbol}</span>
+                    <span className={`text-xs font-semibold ${s.change >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {s.change >= 0 ? "↑" : "↓"} {Math.abs(s.changePct).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="text-lg font-bold">${s.price.toFixed(2)}</div>
                 </div>
-                <button onClick={() => sendMessage()} disabled={loading}
-                  className="px-3 py-1.5 text-[10px] font-bold border border-[var(--accent)] text-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition-all disabled:opacity-30 tracking-widest">
-                  SEND
+              ))}
+            </div>
+          </div>
+
+          {/* Center: Chart */}
+          <div className="col-span-6 flex flex-col gap-3">
+            <div className="glass-card p-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">{selected}</h2>
+                {selectedStock && (
+                  <p className="text-sm text-slate-400">
+                    ${selectedStock.price.toFixed(2)} 
+                    <span className={`ml-2 ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+                      {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
+                    </span>
+                  </p>
+                )}
+              </div>
+              <span className="badge badge-warning">Live Data</span>
+            </div>
+            <div className="flex-1 chart-container">
+              <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
+            </div>
+          </div>
+
+          {/* Right: Analysis + Chat */}
+          <div className="col-span-3 flex flex-col gap-3 overflow-hidden">
+            <div className="glass-card p-4 overflow-y-auto max-h-[45%]">
+              <h3 className="text-sm font-bold mb-3">Strategy Analysis</h3>
+              <AnalysisPanel symbol={selected} />
+            </div>
+
+            <div className="flex-1 flex flex-col glass-card overflow-hidden">
+              <div className="p-3 border-b border-slate-700/50">
+                <h3 className="text-sm font-bold">AI Assistant</h3>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3">
+                {messages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl">
+                      🤖
+                    </div>
+                    <p className="text-xs text-slate-400">Ask me anything</p>
+                    <div className="flex flex-wrap gap-1.5 justify-center">
+                      {QUICK_PROMPTS.map((p) => (
+                        <button key={p} onClick={() => sendMessage(p)} className="btn-secondary text-xs py-1 px-2">
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {messages.map((msg, i) => <ChatBubble key={i} role={msg.role} content={msg.content} />)}
+                {loading && (
+                  <div className="flex items-center gap-2 p-2 glass-card mb-2">
+                    <div className="spinner" />
+                    <span className="text-xs text-slate-400">Analyzing...</span>
+                  </div>
+                )}
+                <div ref={bottomRef} />
+              </div>
+              <div className="p-3 border-t border-slate-700/50 flex gap-2">
+                <input
+                  className="flex-1 text-sm"
+                  placeholder="Ask..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                />
+                <button onClick={() => sendMessage()} disabled={loading} className="btn-primary text-sm px-3">
+                  →
                 </button>
               </div>
             </div>
@@ -321,99 +332,28 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden flex items-center justify-around border-t border-[var(--border)] bg-[var(--panel)] py-2 shrink-0 safe-area-bottom">
-        <button
-          onClick={() => setView("WATCHLIST")}
-          className={`flex flex-col items-center gap-1 px-4 py-1 transition-all active:scale-95 ${
-            view === "WATCHLIST" ? "text-[var(--accent)]" : "text-[var(--muted)]"
-          }`}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          <span className="text-[9px] font-bold tracking-wider">LIST</span>
-        </button>
-
-        <button
-          onClick={() => setView("CHART")}
-          className={`flex flex-col items-center gap-1 px-4 py-1 transition-all active:scale-95 ${
-            view === "CHART" ? "text-[var(--accent)]" : "text-[var(--muted)]"
-          }`}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <span className="text-[9px] font-bold tracking-wider">CHART</span>
-        </button>
-
-        <button
-          onClick={() => setView("ANALYSIS")}
-          className={`flex flex-col items-center gap-1 px-4 py-1 transition-all active:scale-95 ${
-            view === "ANALYSIS" ? "text-[var(--accent)]" : "text-[var(--muted)]"
-          }`}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-          <span className="text-[9px] font-bold tracking-wider">SIGNAL</span>
-        </button>
-
-        <button
-          onClick={() => setView("CHAT")}
-          className={`flex flex-col items-center gap-1 px-4 py-1 transition-all active:scale-95 relative ${
-            view === "CHAT" ? "text-[var(--accent)]" : "text-[var(--muted)]"
-          }`}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          <span className="text-[9px] font-bold tracking-wider">AI</span>
-          {messages.length > 0 && (
-            <span className="absolute top-0 right-2 w-2 h-2 bg-[var(--accent2)] rounded-full animate-pulse" />
-          )}
-        </button>
-      </nav>
-
-      {/* Floating Action Button for Chat Input (Mobile) */}
-      {view === "CHAT" && (
-        <>
+      {/* Mobile Bottom Nav */}
+      <nav className="lg:hidden glass-card m-3 mt-0 p-2 flex items-center justify-around safe-area-bottom">
+        {[
+          { view: "WATCHLIST" as View, icon: "📊", label: "List" },
+          { view: "CHART" as View, icon: "📈", label: "Chart" },
+          { view: "ANALYSIS" as View, icon: "🎯", label: "Signal" },
+          { view: "CHAT" as View, icon: "🤖", label: "AI" },
+        ].map((item) => (
           <button
-            onClick={() => setShowInput(!showInput)}
-            className="lg:hidden fixed bottom-20 right-4 w-14 h-14 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--magenta)] text-white shadow-lg flex items-center justify-center z-50 active:scale-95 transition-all"
-            style={{ boxShadow: "0 0 20px rgba(0,212,255,0.5)" }}
+            key={item.view}
+            onClick={() => setView(item.view)}
+            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
+              view === item.view
+                ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                : "text-slate-400"
+            }`}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+            <span className="text-xl">{item.icon}</span>
+            <span className="text-xs font-semibold">{item.label}</span>
           </button>
-
-          {showInput && (
-            <div className="lg:hidden fixed inset-x-0 bottom-16 bg-[var(--panel)] border-t border-[var(--border)] p-3 z-40 safe-area-bottom">
-              <div className="flex gap-2">
-                <div className="flex-1 flex items-center border border-[var(--border)] rounded-lg bg-black/30 px-3 focus-within:border-[var(--accent)] transition-all">
-                  <span className="text-[var(--accent)] text-sm mr-2">▶</span>
-                  <input
-                    className="flex-1 bg-transparent text-sm text-[var(--text)] outline-none py-3 placeholder:text-[var(--muted)]"
-                    placeholder="Ask about any stock..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    autoFocus
-                  />
-                </div>
-                <button
-                  onClick={() => sendMessage()}
-                  disabled={loading}
-                  className="px-4 py-3 text-xs font-bold border border-[var(--accent)] text-[var(--accent)] rounded-lg hover:bg-[var(--accent)] hover:text-black transition-all disabled:opacity-30 tracking-widest active:scale-95"
-                >
-                  SEND
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+        ))}
+      </nav>
     </div>
   );
 }
