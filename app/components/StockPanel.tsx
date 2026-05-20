@@ -36,23 +36,23 @@ export default function StockPanel() {
   const stock = stocks.find((s) => s.symbol === selected);
 
   return (
-    <div className="panel p-3 flex flex-col gap-3 h-full">
-      <div className="text-xs text-[var(--accent)] font-bold tracking-widest">MARKET WATCH</div>
+    <div className="panel p-3 flex flex-col gap-3 h-full overflow-hidden">
+      <div className="text-xs text-[var(--accent)] font-bold tracking-widest shrink-0">MARKET WATCH</div>
 
-      {/* Stock list */}
-      <div className="flex flex-col gap-1 overflow-y-auto max-h-48">
+      {/* Stock list — horizontal scroll on mobile, vertical on desktop */}
+      <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto md:max-h-48 pb-1 md:pb-0 shrink-0">
         {stocks.map((s) => (
           <div
             key={s.symbol}
             onClick={() => setSelected(s.symbol)}
-            className={`flex justify-between items-center px-2 py-1 rounded cursor-pointer text-xs transition-all ${
+            className={`flex md:flex-row flex-col items-start md:items-center justify-between px-2 py-1.5 rounded cursor-pointer text-xs transition-all shrink-0 md:shrink min-w-[90px] md:min-w-0 ${
               selected === s.symbol
                 ? "bg-[var(--accent)]/10 border border-[var(--accent)]/30"
-                : "hover:bg-white/5"
+                : "border border-transparent hover:bg-white/5"
             }`}
           >
-            <span className="text-[var(--accent)] font-bold w-16">{s.symbol}</span>
-            <span className="text-[var(--text)]">${s.price.toFixed(2)}</span>
+            <span className="text-[var(--accent)] font-bold">{s.symbol}</span>
+            <span className="text-[var(--text)] hidden md:inline">${s.price.toFixed(2)}</span>
             <span className={s.change >= 0 ? "text-[var(--accent2)]" : "text-[var(--red)]"}>
               {s.change >= 0 ? "+" : ""}{s.changePct.toFixed(2)}%
             </span>
@@ -62,15 +62,15 @@ export default function StockPanel() {
 
       {/* Chart */}
       {stock && (
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-1 flex-1 min-h-0">
+          <div className="flex justify-between items-center shrink-0">
             <span className="text-[var(--accent)] font-bold text-sm">{stock.symbol}</span>
             <span className={`text-xs font-bold ${stock.change >= 0 ? "text-[var(--accent2)] glow-green" : "text-[var(--red)] glow-red"}`}>
               {stock.change >= 0 ? "▲" : "▼"} ${Math.abs(stock.change).toFixed(2)}
             </span>
           </div>
-          <div className="text-2xl font-bold glow-text">${stock.price.toFixed(2)}</div>
-          <div className="h-24">
+          <div className="text-xl sm:text-2xl font-bold glow-text shrink-0">${stock.price.toFixed(2)}</div>
+          <div className="flex-1 min-h-[80px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <Line
@@ -92,7 +92,7 @@ export default function StockPanel() {
       )}
 
       {/* Market status */}
-      <div className="mt-auto text-xs text-[var(--muted)] flex justify-between">
+      <div className="shrink-0 text-xs text-[var(--muted)] flex justify-between">
         <span>LIVE DATA</span>
         <span className="text-[var(--accent2)] flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent2)] inline-block animate-pulse" />
