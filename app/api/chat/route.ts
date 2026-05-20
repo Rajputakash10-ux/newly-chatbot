@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { groq } from "@/lib/aws";
-
-type Message = { role: "user" | "assistant"; content: string };
-
-// In-memory store (resets on server restart; replace with DB for persistence)
-const sessions: Record<string, Message[]> = {};
+import { sessions } from "@/lib/sessions";
 
 export async function POST(req: NextRequest) {
   try {
