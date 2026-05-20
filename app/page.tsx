@@ -138,11 +138,29 @@ export default function Home() {
           {/* WATCHLIST */}
           {view === "WATCHLIST" && (
             <div className="flex-1 overflow-y-auto bg-slate-900 pb-16">
-              <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-3 py-2 flex items-center justify-between z-10">
-                <h2 className="text-sm font-bold text-white">Watchlist</h2>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold">
-                  {stocks.length} stocks
-                </span>
+              {/* Hero Section */}
+              <div className="bg-gradient-to-br from-emerald-600 to-teal-600 px-4 py-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Watchlist</h2>
+                    <p className="text-sm text-emerald-100">Track your favorite stocks</p>
+                  </div>
+                  <div className="text-4xl">📊</div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+                    <div className="text-xs text-emerald-100">Total</div>
+                    <div className="text-xl font-bold text-white">{stocks.length}</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+                    <div className="text-xs text-emerald-100">Gainers</div>
+                    <div className="text-xl font-bold text-white">{stocks.filter(s => s.change >= 0).length}</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+                    <div className="text-xs text-emerald-100">Losers</div>
+                    <div className="text-xl font-bold text-white">{stocks.filter(s => s.change < 0).length}</div>
+                  </div>
+                </div>
               </div>
               <div className="p-2 space-y-2">
                 {stocks.map((s) => (
@@ -179,23 +197,36 @@ export default function Home() {
           {/* CHART */}
           {view === "CHART" && (
             <div className="flex-1 flex flex-col bg-slate-900 pb-16">
-              <div className="bg-slate-800 border-b border-slate-700 px-3 py-2">
-                <div className="flex items-center justify-between">
+              {/* Hero Section */}
+              <div className={`bg-gradient-to-br ${isPositive ? 'from-blue-600 to-cyan-600' : 'from-rose-600 to-pink-600'} px-4 py-6`}>
+                <div className="flex items-start justify-between mb-3">
                   <div>
-                    <div className="text-base font-bold text-white">{selected}</div>
-                    {selectedStock && (
-                      <div className="text-xs text-slate-400">
-                        ${selectedStock.price.toFixed(2)} 
-                        <span className={`ml-2 font-semibold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
-                          {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 mb-1">
+                      <h2 className="text-2xl font-bold text-white">{selected}</h2>
+                      <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full font-bold">LIVE</span>
+                    </div>
+                    <p className="text-sm text-white/80">Real-time price chart</p>
                   </div>
-                  <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg font-semibold">
-                    LIVE
-                  </span>
+                  <div className="text-4xl">📈</div>
                 </div>
+                {selectedStock && (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="text-xs text-white/80 mb-1">Current Price</div>
+                        <div className="text-3xl font-bold text-white">${selectedStock.price.toFixed(2)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`text-2xl font-bold ${isPositive ? 'text-emerald-200' : 'text-rose-200'}`}>
+                          {isPositive ? '↑' : '↓'} {Math.abs(selectedStock.changePct).toFixed(2)}%
+                        </div>
+                        <div className={`text-sm font-semibold ${isPositive ? 'text-emerald-200' : 'text-rose-200'}`}>
+                          {isPositive ? '+' : ''}${selectedStock.change.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex-1 bg-slate-950">
                 <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
@@ -206,9 +237,33 @@ export default function Home() {
           {/* ANALYSIS */}
           {view === "ANALYSIS" && (
             <div className="flex-1 overflow-y-auto bg-slate-900 pb-16">
-              <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-3 py-2 flex items-center justify-between z-10">
-                <h2 className="text-sm font-bold text-white">Strategy Analysis</h2>
-                <span className="text-xs text-slate-400">{selected}</span>
+              {/* Hero Section */}
+              <div className="bg-gradient-to-br from-purple-600 to-indigo-600 px-4 py-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Strategy</h2>
+                    <p className="text-sm text-purple-100">EMA/RSI Technical Analysis</p>
+                  </div>
+                  <div className="text-4xl">🎯</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-purple-100 mb-1">Analyzing</div>
+                      <div className="text-xl font-bold text-white">{selected}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="text-center">
+                        <div className="text-xs text-purple-100">EMA</div>
+                        <div className="text-sm font-bold text-white">50/100/200</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-purple-100">RSI</div>
+                        <div className="text-sm font-bold text-white">10/50</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="p-2">
                 <AnalysisPanel symbol={selected} />
@@ -219,9 +274,27 @@ export default function Home() {
           {/* CHAT */}
           {view === "CHAT" && (
             <div className="flex-1 flex flex-col bg-slate-900 pb-16">
-              <div className="bg-slate-800 border-b border-slate-700 px-3 py-2">
-                <div className="text-sm font-bold text-white">AI Assistant</div>
-                <div className="text-xs text-slate-400">Ask anything about trading</div>
+              {/* Hero Section */}
+              <div className="bg-gradient-to-br from-amber-600 to-orange-600 px-4 py-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">AI Assistant</h2>
+                    <p className="text-sm text-amber-100">Powered by Groq AI</p>
+                  </div>
+                  <div className="text-4xl">🤖</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-amber-100 mb-1">Messages</div>
+                      <div className="text-xl font-bold text-white">{messages.length}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                      <span className="text-xs font-bold text-white">ONLINE</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 bg-slate-950">
@@ -377,7 +450,6 @@ export default function Home() {
             { view: "WATCHLIST" as View, icon: "📊", label: "List" },
             { view: "CHART" as View, icon: "📈", label: "Chart" },
             { view: "ANALYSIS" as View, icon: "🎯", label: "Signal" },
-            { view: "CHAT" as View, icon: "🤖", label: "AI" },
           ].map((item) => (
             <button
               key={item.view}
@@ -394,6 +466,16 @@ export default function Home() {
           ))}
         </div>
       </nav>
+
+      {/* Floating Chat Button - Mobile */}
+      {view !== "CHAT" && (
+        <button
+          onClick={() => setView("CHAT")}
+          className="lg:hidden fixed bottom-20 right-4 w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full shadow-lg flex items-center justify-center text-2xl z-50 active:scale-95 transition-transform"
+        >
+          🤖
+        </button>
+      )}
     </div>
   );
 }
