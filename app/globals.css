@@ -469,3 +469,21 @@ body {
   line-height: 1.8;
   padding: 16px;
 }
+
+/* ── Safe area for iOS notch and Android gesture bar ── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Touch-friendly mobile styles ── */
+@media (max-width: 1024px) {
+  button, a {
+    -webkit-tap-highlight-color: rgba(0, 212, 255, 0.1);
+  }
+  
+  input, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+}
