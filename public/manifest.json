@@ -1,7 +1,7 @@
 {
   "name": "NEXUS AI - Intelligence Platform",
   "short_name": "NEXUS AI",
-  "description": "Next-generation artificial intelligence platform for advanced analytics and predictions",
+  "description": "Advanced AI platform for analytics, predictions, and intelligent insights",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
