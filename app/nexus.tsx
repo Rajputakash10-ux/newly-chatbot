@@ -146,12 +146,12 @@ export default function Nexus() {
             </svg>
             <span className="logo-text">NEXUS AI</span>
           </div>
-          <div className={`nav-center ${menuOpen ? "open" : ""}`}>
-            <a href="#dashboard">Dashboard</a>
-            <a href="#analyzer">Analyzer</a>
-            <a href="#models">Models</a>
-            <a href="#reports">Reports</a>
-            <a href="#settings">Settings</a>
+          <div className="nav-center">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/analyzer">Analyzer</a>
+            <a href="/models">Models</a>
+            <a href="/reports">Reports</a>
+            <a href="/settings">Settings</a>
           </div>
           <div className="nav-right">
             <span className="clock">{time}</span>
