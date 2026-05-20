@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { groq } from "@/lib/aws";
-import { sessions } from "@/lib/sessions";
+import { getSQL } from "@/lib/db/client";
 import { analyzeStock } from "@/lib/analysis";
 
 async function fetchAnalysisContext(message: string): Promise<string> {
-  // Extract stock symbols from message (e.g. AAPL, TSLA, NVDA)
   const symbols = message.match(/\b[A-Z]{2,5}\b/g) || [];
   const knownSymbols = ["AAPL", "TSLA", "NVDA", "MSFT", "AMZN", "GOOGL", "META", "SPY", "BTC-USD", "ETH-USD"];
   const matched = symbols.filter((s) => knownSymbols.includes(s));
@@ -44,27 +43,45 @@ Always be concise, data-driven, and include risk warnings. Format responses clea
 
 export async function POST(req: NextRequest) {
   try {
+    const sql = getSQL();
     const { sessionId, message } = await req.json();
 
-    if (!sessions[sessionId]) sessions[sessionId] = [];
+    // Ensure session exists
+    await sql`
+      INSERT INTO chat_sessions (id, created_at, updated_at)
+      VALUES (${sessionId}, NOW(), NOW())
+      ON CONFLICT (id) DO UPDATE SET updated_at = NOW()
+    `;
+
+    // Get chat history
+    const history = await sql`
+      SELECT role, content FROM chat_messages
+      WHERE session_id = ${sessionId}
+      ORDER BY created_at ASC
+    `;
 
     const analysisContext = await fetchAnalysisContext(message);
     const enrichedMessage = message + analysisContext;
 
-    sessions[sessionId].push({ role: "user", content: enrichedMessage });
+    const messages = [
+      ...history.map((m: any) => ({ role: m.role as "user" | "assistant", content: m.content })),
+      { role: "user" as const, content: enrichedMessage },
+    ];
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...sessions[sessionId],
-      ],
+      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
     });
 
     const aiResponse = completion.choices[0].message.content || "";
-    // Store original message (not enriched) for display
-    sessions[sessionId][sessions[sessionId].length - 1] = { role: "user", content: message };
-    sessions[sessionId].push({ role: "assistant", content: aiResponse });
+
+    // Save messages to DB
+    await sql`
+      INSERT INTO chat_messages (session_id, role, content, created_at)
+      VALUES 
+        (${sessionId}, 'user', ${message}, NOW()),
+        (${sessionId}, 'assistant', ${aiResponse}, NOW())
+    `;
 
     return NextResponse.json({ response: aiResponse });
   } catch (err) {
@@ -75,5 +92,18 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get("sessionId") || "";
-  return NextResponse.json({ messages: sessions[sessionId] || [] });
+  
+  try {
+    const sql = getSQL();
+    const messages = await sql`
+      SELECT role, content FROM chat_messages
+      WHERE session_id = ${sessionId}
+      ORDER BY created_at ASC
+    `;
+    
+    return NextResponse.json({ messages });
+  } catch (err) {
+    console.error("History error:", err);
+    return NextResponse.json({ messages: [] });
+  }
 }
