@@ -23,6 +23,7 @@ export default function Home() {
   const [selected, setSelected] = useState("AAPL");
   const [view, setView] = useState<View>("CHART");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const selectedStock = stocks.find((s) => s.symbol === selected);
   const isPositive = (selectedStock?.change ?? 0) >= 0;
@@ -72,53 +73,53 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      {/* Header */}
-      <header className="glass-card m-3 mb-0 p-4 flex items-center justify-between shrink-0 fade-in">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white">
+      {/* Header - Compact on mobile */}
+      <header className="glass-card m-2 sm:m-3 mb-0 p-3 sm:p-4 flex items-center justify-between shrink-0 fade-in">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm sm:text-base">
             N
           </div>
           <div>
-            <h1 className="text-lg font-bold gradient-text">NEWLY</h1>
-            <p className="text-xs text-slate-400">Trading Terminal</p>
+            <h1 className="text-sm sm:text-lg font-bold gradient-text">NEWLY</h1>
+            <p className="text-[10px] sm:text-xs text-slate-400 hidden sm:block">Trading Terminal</p>
           </div>
         </div>
         {selectedStock && view !== "WATCHLIST" && (
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <div className="text-right">
-              <div className="text-sm font-bold">{selectedStock.symbol}</div>
-              <div className="text-xs text-slate-400">Live Price</div>
+              <div className="text-xs sm:text-sm font-bold">{selectedStock.symbol}</div>
+              <div className="text-[10px] sm:text-xs text-slate-400 hidden sm:block">Live Price</div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold">${selectedStock.price.toFixed(2)}</div>
-              <div className={`text-sm font-semibold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+              <div className="text-base sm:text-xl font-bold">${selectedStock.price.toFixed(2)}</div>
+              <div className={`text-xs sm:text-sm font-semibold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
                 {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
               </div>
             </div>
           </div>
         )}
-        <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-3">
           <div className="status-dot online" />
           <span className="text-sm font-mono text-slate-400">{time}</span>
         </div>
       </header>
 
-      {/* Ticker */}
+      {/* Ticker - Hide on mobile except watchlist */}
       <div className={view === "WATCHLIST" ? "block" : "hidden lg:block"}>
         <StockTicker />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden p-3 pt-2">
+      <div className="flex-1 overflow-hidden p-2 sm:p-3 pt-2">
         
         {/* Mobile Views */}
         <div className="lg:hidden h-full">
           {/* WATCHLIST */}
           {view === "WATCHLIST" && (
-            <div className="h-full overflow-y-auto space-y-2 slide-up">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold">Watchlist</h2>
-                <span className="badge badge-success">{stocks.length} stocks</span>
+            <div className="h-full overflow-y-auto space-y-2 pb-20 slide-up">
+              <div className="flex items-center justify-between mb-2 px-1">
+                <h2 className="text-base sm:text-lg font-bold">Watchlist</h2>
+                <span className="badge badge-success text-xs">{stocks.length} stocks</span>
               </div>
               {stocks.map((s, i) => (
                 <div
@@ -128,13 +129,13 @@ export default function Home() {
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-base font-bold">{s.symbol}</span>
-                    <span className={`badge ${s.change >= 0 ? "badge-success" : "badge-danger"}`}>
+                    <span className="text-base sm:text-lg font-bold">{s.symbol}</span>
+                    <span className={`badge ${s.change >= 0 ? "badge-success" : "badge-danger"} text-xs`}>
                       {s.change >= 0 ? "↑" : "↓"} {Math.abs(s.changePct).toFixed(2)}%
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold">${s.price.toFixed(2)}</span>
+                    <span className="text-xl sm:text-2xl font-bold">${s.price.toFixed(2)}</span>
                     <span className={`text-sm ${s.change >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                       {s.change >= 0 ? "+" : ""}${s.change.toFixed(2)}
                     </span>
@@ -146,12 +147,12 @@ export default function Home() {
 
           {/* CHART */}
           {view === "CHART" && (
-            <div className="h-full flex flex-col slide-up">
+            <div className="h-full flex flex-col pb-20 slide-up">
               <div className="glass-card p-3 mb-2 flex items-center justify-between">
-                <div>
-                  <div className="text-lg font-bold">{selected}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-base sm:text-lg font-bold truncate">{selected}</div>
                   {selectedStock && (
-                    <div className="text-sm text-slate-400">
+                    <div className="text-xs sm:text-sm text-slate-400">
                       ${selectedStock.price.toFixed(2)} 
                       <span className={`ml-2 ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
                         {isPositive ? "↑" : "↓"} {Math.abs(selectedStock.changePct).toFixed(2)}%
@@ -159,9 +160,9 @@ export default function Home() {
                     </div>
                   )}
                 </div>
-                <span className="badge badge-warning">Live</span>
+                <span className="badge badge-warning text-xs ml-2">Live</span>
               </div>
-              <div className="flex-1 chart-container">
+              <div className="flex-1 chart-container min-h-0">
                 <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
               </div>
             </div>
@@ -169,10 +170,10 @@ export default function Home() {
 
           {/* ANALYSIS */}
           {view === "ANALYSIS" && (
-            <div className="h-full overflow-y-auto slide-up">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold">Strategy Analysis</h2>
-                <span className="text-sm text-slate-400">{selected}</span>
+            <div className="h-full overflow-y-auto pb-20 slide-up">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h2 className="text-base sm:text-lg font-bold">Strategy Analysis</h2>
+                <span className="text-xs sm:text-sm text-slate-400">{selected}</span>
               </div>
               <AnalysisPanel symbol={selected} />
             </div>
@@ -180,25 +181,25 @@ export default function Home() {
 
           {/* CHAT */}
           {view === "CHAT" && (
-            <div className="h-full flex flex-col slide-up">
+            <div className="h-full flex flex-col pb-20 slide-up">
               <div className="glass-card p-3 mb-2">
-                <h2 className="text-base font-bold">AI Trading Assistant</h2>
-                <p className="text-xs text-slate-400">Powered by Groq AI</p>
+                <h2 className="text-sm sm:text-base font-bold">AI Trading Assistant</h2>
+                <p className="text-[10px] sm:text-xs text-slate-400">Powered by Groq AI</p>
               </div>
 
-              <div className="flex-1 overflow-y-auto glass-card p-3 mb-2">
+              <div className="flex-1 overflow-y-auto glass-card p-3 mb-2 min-h-0">
                 {messages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl float">
+                  <div className="flex flex-col items-center justify-center h-full gap-3 sm:gap-4 text-center px-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl float">
                       🤖
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold mb-1">AI Assistant Ready</h3>
-                      <p className="text-sm text-slate-400">Ask me anything about stocks and trading</p>
+                      <h3 className="text-base sm:text-lg font-bold mb-1">AI Assistant Ready</h3>
+                      <p className="text-xs sm:text-sm text-slate-400">Ask me anything about stocks and trading</p>
                     </div>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {QUICK_PROMPTS.map((p) => (
-                        <button key={p} onClick={() => sendMessage(p)} className="btn-secondary text-xs py-2">
+                        <button key={p} onClick={() => sendMessage(p)} className="btn-secondary text-xs py-2 px-3">
                           {p}
                         </button>
                       ))}
@@ -209,21 +210,22 @@ export default function Home() {
                 {loading && (
                   <div className="flex items-center gap-2 p-3 glass-card mb-2">
                     <div className="spinner" />
-                    <span className="text-sm text-slate-400">Analyzing...</span>
+                    <span className="text-xs sm:text-sm text-slate-400">Analyzing...</span>
                   </div>
                 )}
                 <div ref={bottomRef} />
               </div>
 
-              <div className="glass-card p-3 flex gap-2">
+              <div className="glass-card p-2 sm:p-3 flex gap-2">
                 <input
-                  className="flex-1"
+                  ref={inputRef}
+                  className="flex-1 text-sm sm:text-base"
                   placeholder="Ask about any stock..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
-                <button onClick={() => sendMessage()} disabled={loading} className="btn-primary">
+                <button onClick={() => sendMessage()} disabled={loading} className="btn-primary px-4 sm:px-6">
                   Send
                 </button>
               </div>
@@ -332,8 +334,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden glass-card m-3 mt-0 p-2 flex items-center justify-around safe-area-bottom">
+      {/* Mobile Bottom Nav - Fixed with safe area */}
+      <nav className="lg:hidden glass-card m-2 sm:m-3 mt-0 p-2 flex items-center justify-around safe-area-bottom fixed bottom-0 left-0 right-0 z-50">
         {[
           { view: "WATCHLIST" as View, icon: "📊", label: "List" },
           { view: "CHART" as View, icon: "📈", label: "Chart" },
@@ -343,14 +345,14 @@ export default function Home() {
           <button
             key={item.view}
             onClick={() => setView(item.view)}
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 px-3 sm:px-4 py-2 rounded-xl transition-all min-w-[60px] ${
               view === item.view
-                ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
-                : "text-slate-400"
+                ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white scale-105"
+                : "text-slate-400 active:scale-95"
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
-            <span className="text-xs font-semibold">{item.label}</span>
+            <span className="text-lg sm:text-xl">{item.icon}</span>
+            <span className="text-[10px] sm:text-xs font-semibold">{item.label}</span>
           </button>
         ))}
       </nav>

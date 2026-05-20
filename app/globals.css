@@ -416,3 +416,175 @@ input::placeholder, textarea::placeholder {
 .tooltip:hover::after {
   opacity: 1;
 }
+
+
+/* ── Mobile Optimizations ── */
+@media (max-width: 640px) {
+  .glass-card {
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .stock-card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  input, textarea {
+    padding: 10px 14px;
+    font-size: 16px; /* Prevents iOS zoom */
+    border-radius: 10px;
+  }
+}
+
+/* ── Tablet Optimizations ── */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .glass-card {
+    border-radius: 14px;
+  }
+
+  .stock-card {
+    border-radius: 12px;
+  }
+}
+
+/* ── Touch Improvements ── */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile touch devices */
+  button, .stock-card, a {
+    -webkit-tap-highlight-color: rgba(99, 102, 241, 0.15);
+    touch-action: manipulation;
+  }
+
+  button:active, .stock-card:active {
+    transform: scale(0.98);
+  }
+
+  /* Larger touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent double-tap zoom */
+  * {
+    touch-action: manipulation;
+  }
+}
+
+/* ── Landscape Mode ── */
+@media (max-width: 1023px) and (orientation: landscape) {
+  .glass-card {
+    padding: 8px 12px;
+  }
+
+  header {
+    padding: 8px 12px !important;
+  }
+
+  nav {
+    padding: 6px !important;
+  }
+}
+
+/* ── High DPI Screens ── */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .glass-card {
+    border-width: 0.5px;
+  }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Dark Mode Support ── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --border: rgba(99, 102, 241, 0.2);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+  }
+}
+
+/* ── iOS Specific ── */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari */
+  input, textarea {
+    font-size: 16px !important; /* Prevents zoom */
+  }
+
+  .safe-area-bottom {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Fix iOS bounce scroll */
+  body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* ── Android Specific ── */
+@media (max-width: 1023px) {
+  /* Better scrolling on Android */
+  * {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ── Small Phones (< 375px) ── */
+@media (max-width: 374px) {
+  .glass-card {
+    margin: 8px;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
+/* ── Large Phones (> 428px) ── */
+@media (min-width: 428px) and (max-width: 1023px) {
+  .glass-card {
+    margin: 12px;
+  }
+
+  .stock-card {
+    padding: 18px;
+  }
+}
