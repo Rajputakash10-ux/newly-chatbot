@@ -282,20 +282,29 @@ export default function Nexus() {
         </div>
       </section>
 
-      {/* AI ANALYZER */}
+      {/* AI CHAT ANALYZER */}
       <section className="analyzer-section">
         <h2 className="section-title">
-          AI Input Analyzer
+          AI Chat Interface
           <div className="title-glow" />
         </h2>
         <div className="analyzer-container">
-          <textarea
-            className="analyzer-input"
-            placeholder="Feed data to NEXUS AI..."
-            rows={6}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
+          <div className="chat-messages-mini">
+            {messages.map((msg, i) => (
+              <div key={i} className={`chat-bubble ${msg.role}`}>
+                <span className="bubble-icon">{msg.role === "user" ? "👤" : "🤖"}</span>
+                <span className="bubble-text">{msg.content}</span>
+              </div>
+            ))}
+            {analyzing && (
+              <div className="chat-bubble assistant">
+                <span className="bubble-icon">🤖</span>
+                <span className="bubble-text typing-dots">
+                  <span></span><span></span><span></span>
+                </span>
+              </div>
+            )}
+          </div>
           <div className="mode-toggles">
             <button className={`mode-btn ${mode === "Text" ? "active" : ""}`} onClick={() => setMode("Text")}>
               Text
@@ -307,22 +316,21 @@ export default function Nexus() {
               Neural
             </button>
           </div>
-          <button className="analyze-btn" onClick={analyzeInput} disabled={analyzing}>
-            <span>{analyzing ? "ANALYZING..." : "ANALYZE"}</span>
-            <div className="scan-beam" />
-          </button>
-          <div className="result-panel">
-            <pre>
-              {result
-                ? JSON.stringify(result, null, 2)
-                : `{
-  "status": "ready",
-  "confidence": 0.000,
-  "predictions": [],
-  "latency": "0.00ms"
-}`}
-            </pre>
+          <div className="chat-input-row">
+            <input
+              className="chat-input-field"
+              placeholder="Ask NEXUS AI anything..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && analyzeInput()}
+            />
+            <button className="send-btn" onClick={analyzeInput} disabled={analyzing}>
+              {analyzing ? "⏳" : "➤"}
+            </button>
           </div>
+          <button className="full-chat-btn" onClick={() => window.location.href = "/chat"}>
+            Open Full Chat →
+          </button>
         </div>
       </section>
 
