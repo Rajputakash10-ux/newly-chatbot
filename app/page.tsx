@@ -75,7 +75,7 @@ export default function Home() {
     <div className="flex flex-col h-screen bg-[var(--bg)] overflow-hidden">
       <div className="scanline" />
 
-      {/* ── Header ── */}
+      {/* Header */}
       <header className="flex items-center justify-between px-3 py-2 border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
@@ -96,10 +96,10 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── Ticker ── */}
+      {/* Ticker */}
       <StockTicker />
 
-      {/* ── Mobile Tab Bar ── */}
+      {/* Mobile Tab Bar */}
       <div className="flex lg:hidden border-b border-[var(--border)] bg-[var(--panel)] shrink-0">
         {(["CHART", "ANALYSIS", "CHAT"] as Tab[]).map((tab) => (
           <button
@@ -116,10 +116,10 @@ export default function Home() {
         ))}
       </div>
 
-      {/* ── Main 3-column layout ── */}
+      {/* Main 3-column layout */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* ── LEFT: Stock List ── */}
+        {/* LEFT: Stock List */}
         <div className={`
           lg:w-48 lg:flex lg:flex-col lg:border-r lg:border-[var(--border)] shrink-0 overflow-hidden
           ${mobileTab === "CHART" ? "hidden lg:flex" : "hidden lg:flex"}
@@ -150,12 +150,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── CENTER: Chart ── */}
+        {/* CENTER: Chart */}
         <div className={`
           flex-1 flex flex-col overflow-hidden border-r border-[var(--border)]
           ${mobileTab === "CHART" ? "flex" : "hidden lg:flex"}
         `}>
-          {/* Chart header */}
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-[var(--border)] shrink-0 bg-[var(--panel)]">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-[var(--accent)]">{selected}</span>
@@ -168,14 +167,14 @@ export default function Home() {
                 </>
               )}
             </div>
-            <span className="text-[10px] text-[var(--muted)] tracking-widest">CANDLESTICK · EMA 50/100/200 · VOLUME</span>
+            <span className="text-[10px] text-[var(--muted)] tracking-widest hidden md:inline">CANDLESTICK · EMA 50/100/200 · VOLUME</span>
           </div>
           <div className="flex-1 overflow-hidden">
             <CandlestickChart key={selected} symbol={selected} isPositive={isPositive} />
           </div>
         </div>
 
-        {/* ── RIGHT: Analysis + Chat ── */}
+        {/* RIGHT: Analysis + Chat */}
         <div className={`
           lg:w-80 xl:w-96 flex flex-col overflow-hidden
           ${mobileTab === "ANALYSIS" || mobileTab === "CHAT" ? "flex flex-1" : "hidden lg:flex"}
