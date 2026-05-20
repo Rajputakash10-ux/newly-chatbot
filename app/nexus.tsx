@@ -1,11 +1,33 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
+
+type Message = { role: "user" | "assistant"; content: string };
+type AnalysisResult = {
+  status: string;
+  confidence: number;
+  predictions: { class: string; score: number }[];
+  latency: string;
+};
 
 export default function Nexus() {
   const [time, setTime] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [metrics, setMetrics] = useState({ params: 0, accuracy: 0, latency: 0, models: 0 });
+  const [input, setInput] = useState("");
+  const [mode, setMode] = useState<"Text" | "Vision" | "Neural">("Text");
+  const [analyzing, setAnalyzing] = useState(false);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [sessionId, setSessionId] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [liveMetrics, setLiveMetrics] = useState({
+    neural: 85,
+    vision: 92,
+    pattern: 78,
+    inference: 95,
+    predictive: 88,
+  });
   const metricsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -13,6 +35,15 @@ export default function Nexus() {
     tick();
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    let sid = localStorage.getItem("nexusSessionId");
+    if (!sid) {
+      sid = uuidv4();
+      localStorage.setItem("nexusSessionId", sid);
+    }
+    setSessionId(sid);
   }, []);
 
   useEffect(() => {
@@ -32,6 +63,19 @@ export default function Nexus() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveMetrics({
+        neural: 80 + Math.random() * 15,
+        vision: 88 + Math.random() * 10,
+        pattern: 75 + Math.random() * 10,
+        inference: 92 + Math.random() * 8,
+        predictive: 85 + Math.random() * 10,
+      });
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const animateMetrics = () => {
     const duration = 2000;
     const steps = 60;
@@ -49,6 +93,46 @@ export default function Nexus() {
       });
       if (step >= steps) clearInterval(timer);
     }, interval);
+  };
+
+  const analyzeInput = async () => {
+    if (!input.trim() || analyzing) return;
+    setAnalyzing(true);
+
+    try {
+      const res = await fetch("/api/nexus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, message: input, mode }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setResult({
+          status: "success",
+          confidence: 0.95 + Math.random() * 0.04,
+          predictions: [
+            { class: "positive", score: 0.9 + Math.random() * 0.09 },
+            { class: "neutral", score: 0.05 + Math.random() * 0.05 },
+          ],
+          latency: `${(Math.random() * 0.5).toFixed(2)}ms`,
+        });
+        setMessages((prev) => [
+          ...prev,
+          { role: "user", content: input },
+          { role: "assistant", content: data.response },
+        ]);
+      }
+    } catch (error) {
+      setResult({
+        status: "error",
+        confidence: 0,
+        predictions: [],
+        latency: "N/A",
+      });
+    }
+
+    setAnalyzing(false);
   };
 
   return (
@@ -134,11 +218,11 @@ export default function Nexus() {
           </div>
           <div className="feed-items">
             {[
-              { icon: "🧠", label: "Neural Processing", color: "cyan", width: 85 },
-              { icon: "👁", label: "Vision Analysis", color: "purple", width: 92 },
-              { icon: "🎯", label: "Pattern Recognition", color: "magenta", width: 78 },
-              { icon: "⚡", label: "Real-time Inference", color: "green", width: 95 },
-              { icon: "🔮", label: "Predictive Modeling", color: "orange", width: 88 },
+              { icon: "🧠", label: "Neural Processing", color: "cyan", width: liveMetrics.neural },
+              { icon: "👁", label: "Vision Analysis", color: "purple", width: liveMetrics.vision },
+              { icon: "🎯", label: "Pattern Recognition", color: "magenta", width: liveMetrics.pattern },
+              { icon: "⚡", label: "Real-time Inference", color: "green", width: liveMetrics.inference },
+              { icon: "🔮", label: "Predictive Modeling", color: "orange", width: liveMetrics.predictive },
             ].map((item, i) => (
               <div key={i} className="feed-item" style={{ animationDelay: `${i * 0.2}s` }}>
                 <span className="feed-icon">{item.icon}</span>
@@ -205,26 +289,39 @@ export default function Nexus() {
           <div className="title-glow" />
         </h2>
         <div className="analyzer-container">
-          <textarea className="analyzer-input" placeholder="Feed data to NEXUS AI..." rows={6} />
+          <textarea
+            className="analyzer-input"
+            placeholder="Feed data to NEXUS AI..."
+            rows={6}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
           <div className="mode-toggles">
-            <button className="mode-btn active">Text</button>
-            <button className="mode-btn">Vision</button>
-            <button className="mode-btn">Neural</button>
+            <button className={`mode-btn ${mode === "Text" ? "active" : ""}`} onClick={() => setMode("Text")}>
+              Text
+            </button>
+            <button className={`mode-btn ${mode === "Vision" ? "active" : ""}`} onClick={() => setMode("Vision")}>
+              Vision
+            </button>
+            <button className={`mode-btn ${mode === "Neural" ? "active" : ""}`} onClick={() => setMode("Neural")}>
+              Neural
+            </button>
           </div>
-          <button className="analyze-btn">
-            <span>ANALYZE</span>
+          <button className="analyze-btn" onClick={analyzeInput} disabled={analyzing}>
+            <span>{analyzing ? "ANALYZING..." : "ANALYZE"}</span>
             <div className="scan-beam" />
           </button>
           <div className="result-panel">
-            <pre>{`{
-  "status": "success",
-  "confidence": 0.987,
-  "predictions": [
-    { "class": "positive", "score": 0.94 },
-    { "class": "neutral", "score": 0.05 }
-  ],
-  "latency": "0.23ms"
-}`}</pre>
+            <pre>
+              {result
+                ? JSON.stringify(result, null, 2)
+                : `{
+  "status": "ready",
+  "confidence": 0.000,
+  "predictions": [],
+  "latency": "0.00ms"
+}`}
+            </pre>
           </div>
         </div>
       </section>
