@@ -1,0 +1,26 @@
+{
+  "name": "NEXUS AI - Intelligence Platform",
+  "short_name": "NEXUS AI",
+  "description": "Next-generation artificial intelligence platform for advanced analytics and predictions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00ffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business", "utilities"],
+  "screenshots": []
+}
