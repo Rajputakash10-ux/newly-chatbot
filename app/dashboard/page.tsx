@@ -45,6 +45,7 @@ export default function Dashboard() {
           <div className="nav-center">
             <a href="/dashboard">Dashboard</a>
             <a href="/analyzer">Analyzer</a>
+            <a href="/trading">Trading</a>
             <a href="/models">Models</a>
             <a href="/reports">Reports</a>
             <a href="/settings">Settings</a>

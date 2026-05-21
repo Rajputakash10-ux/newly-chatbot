@@ -159,6 +159,7 @@ export default function Nexus() {
           <div className={`nav-center ${menuOpen ? "open" : ""}`}>
             <a href="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</a>
             <a href="/analyzer" onClick={() => setMenuOpen(false)}>Analyzer</a>
+            <a href="/trading" onClick={() => setMenuOpen(false)}>Trading</a>
             <a href="/models" onClick={() => setMenuOpen(false)}>Models</a>
             <a href="/reports" onClick={() => setMenuOpen(false)}>Reports</a>
             <a href="/settings" onClick={() => setMenuOpen(false)}>Settings</a>
