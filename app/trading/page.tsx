@@ -74,13 +74,69 @@ export default function TradingPage() {
                 </button>
               ))}
             </div>
+            
+            <div style={{ marginTop: "2rem", padding: "1rem", background: "rgba(0, 255, 255, 0.05)", borderRadius: "8px" }}>
+              <h4 style={{ fontSize: "0.9rem", marginBottom: "1rem", color: "#00ffff" }}>Active Indicators</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "0.8rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> RSI (14)
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> MACD (12,26,9)
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> Bollinger Bands
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> Volume
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> SMA (50, 200)
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> EMA (12, 26)
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> Stochastic RSI
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#00ff00" }}>●</span> ATR (14)
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="glass-card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
               <h3>{selectedSymbol}</h3>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <span style={{ padding: "0.5rem 1rem", background: "rgba(0, 255, 255, 0.1)", borderRadius: "20px", fontSize: "0.85rem" }}>
+                  📈 Live Data
+                </span>
+                <span style={{ padding: "0.5rem 1rem", background: "rgba(0, 255, 0, 0.1)", borderRadius: "20px", fontSize: "0.85rem", color: "#00ff00" }}>
+                  ● Real-time
+                </span>
+              </div>
             </div>
             <TradingViewWidget symbol={selectedSymbol} height={600} />
+            
+            <div style={{ marginTop: "1.5rem", padding: "1rem", background: "rgba(0, 255, 255, 0.05)", borderRadius: "8px" }}>
+              <h4 style={{ fontSize: "0.9rem", marginBottom: "0.75rem", color: "#00ffff" }}>Indicator Guide</h4>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem", fontSize: "0.8rem", color: "#aaa" }}>
+                <div>
+                  <strong style={{ color: "#fff" }}>RSI:</strong> Overbought &gt;70, Oversold &lt;30
+                </div>
+                <div>
+                  <strong style={{ color: "#fff" }}>MACD:</strong> Bullish crossover above signal
+                </div>
+                <div>
+                  <strong style={{ color: "#fff" }}>BB:</strong> Price bounces between bands
+                </div>
+                <div>
+                  <strong style={{ color: "#fff" }}>Volume:</strong> Confirms price movements
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

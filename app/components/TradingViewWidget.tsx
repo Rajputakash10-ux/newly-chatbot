@@ -12,7 +12,7 @@ interface TradingViewWidgetProps {
 }
 
 export default function TradingViewWidget({
-  symbol = "NASDAQ:AAPL",
+  symbol = "BINANCE:BTCUSDT",
   theme = "dark",
   width = "100%",
   height = 500,
@@ -44,12 +44,35 @@ export default function TradingViewWidget({
           container_id: container.current?.id || "tradingview_widget",
           width: width,
           height: height,
-          studies: ["RSI@tv-basicstudies", "MASimple@tv-basicstudies"],
+          studies: [
+            "RSI@tv-basicstudies",
+            "MACD@tv-basicstudies",
+            "BB@tv-basicstudies",
+            "Volume@tv-basicstudies",
+            "MASimple@tv-basicstudies",
+            "MAExp@tv-basicstudies",
+            "StochasticRSI@tv-basicstudies",
+            "ATR@tv-basicstudies",
+          ],
+          studies_overrides: {
+            "volume.volume.color.0": "rgba(255, 0, 0, 0.5)",
+            "volume.volume.color.1": "rgba(0, 255, 0, 0.5)",
+            "RSI.plot.color": "#00ffff",
+            "MACD.macd.color": "#00ffff",
+            "MACD.signal.color": "#ff00ff",
+            "BB.upper.color": "#00ffff",
+            "BB.lower.color": "#00ffff",
+            "BB.median.color": "#ff00ff",
+          },
           backgroundColor: "#000000",
           gridColor: "rgba(0, 255, 255, 0.1)",
           hide_top_toolbar: false,
           hide_legend: false,
-          save_image: false,
+          save_image: true,
+          withdateranges: true,
+          details: true,
+          hotlist: true,
+          calendar: true,
         });
       }
     };
