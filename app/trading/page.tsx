@@ -6,8 +6,10 @@ import TradingViewMiniChart from "../components/TradingViewMiniChart";
 import "../nexus.css";
 
 export default function TradingPage() {
-  const [selectedSymbol, setSelectedSymbol] = useState("NASDAQ:AAPL");
+  const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSDT");
   const [watchlist] = useState([
+    { symbol: "BINANCE:BTCUSDT", name: "Bitcoin" },
+    { symbol: "BINANCE:ETHUSDT", name: "Ethereum" },
     { symbol: "NASDAQ:AAPL", name: "Apple Inc." },
     { symbol: "NASDAQ:TSLA", name: "Tesla Inc." },
     { symbol: "NASDAQ:NVDA", name: "NVIDIA Corp." },
@@ -15,7 +17,9 @@ export default function TradingPage() {
     { symbol: "NASDAQ:GOOGL", name: "Alphabet Inc." },
     { symbol: "NASDAQ:AMZN", name: "Amazon.com Inc." },
     { symbol: "NASDAQ:META", name: "Meta Platforms Inc." },
-    { symbol: "NYSE:SPY", name: "S&P 500 ETF" },
+    { symbol: "BINANCE:SOLUSDT", name: "Solana" },
+    { symbol: "BINANCE:BNBUSDT", name: "Binance Coin" },
+    { symbol: "BINANCE:ADAUSDT", name: "Cardano" },
   ]);
 
   return (
@@ -63,7 +67,9 @@ export default function TradingPage() {
                     transition: "all 0.3s",
                   }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{stock.symbol.split(":")[1]}</div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                    {stock.symbol.includes("USDT") ? stock.name : stock.symbol.split(":")[1]}
+                  </div>
                   <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "0.25rem" }}>{stock.name}</div>
                 </button>
               ))}
@@ -81,7 +87,7 @@ export default function TradingPage() {
         <div style={{ marginTop: "3rem" }}>
           <h2 className="section-title" style={{ fontSize: "2rem" }}>Market Overview</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem", marginTop: "2rem" }}>
-            {watchlist.slice(0, 4).map((stock) => (
+            {watchlist.slice(0, 6).map((stock) => (
               <div key={stock.symbol} className="glass-card" style={{ cursor: "pointer" }} onClick={() => setSelectedSymbol(stock.symbol)}>
                 <h4 style={{ marginBottom: "1rem", color: "#00ffff" }}>{stock.name}</h4>
                 <TradingViewMiniChart symbol={stock.symbol} height={250} />
