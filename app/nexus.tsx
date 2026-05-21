@@ -38,6 +38,16 @@ export default function Nexus() {
   }, []);
 
   useEffect(() => {
+    // Handle body scroll lock when menu is open
+    if (menuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+    return () => document.body.classList.remove('menu-open');
+  }, [menuOpen]);
+
+  useEffect(() => {
     let sid = localStorage.getItem("nexusSessionId");
     if (!sid) {
       sid = uuidv4();
@@ -146,12 +156,12 @@ export default function Nexus() {
             </svg>
             <span className="logo-text">NEXUS AI</span>
           </div>
-          <div className="nav-center">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/analyzer">Analyzer</a>
-            <a href="/models">Models</a>
-            <a href="/reports">Reports</a>
-            <a href="/settings">Settings</a>
+          <div className={`nav-center ${menuOpen ? "open" : ""}`}>
+            <a href="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</a>
+            <a href="/analyzer" onClick={() => setMenuOpen(false)}>Analyzer</a>
+            <a href="/models" onClick={() => setMenuOpen(false)}>Models</a>
+            <a href="/reports" onClick={() => setMenuOpen(false)}>Reports</a>
+            <a href="/settings" onClick={() => setMenuOpen(false)}>Settings</a>
           </div>
           <div className="nav-right">
             <span className="clock">{time}</span>
@@ -160,8 +170,8 @@ export default function Nexus() {
               <span>SYSTEM ONLINE</span>
             </div>
             <div className="avatar" />
-            <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-              ☰
+            <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+              {menuOpen ? "✕" : "☰"}
             </button>
           </div>
         </div>
