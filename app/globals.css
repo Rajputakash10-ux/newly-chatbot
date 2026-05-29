@@ -598,3 +598,9 @@ input::placeholder, textarea::placeholder {
 .animate-fade-in {
   animation: animate-fade-in 0.3s ease forwards;
 }
+
+/* ── Grid animation ── */
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}

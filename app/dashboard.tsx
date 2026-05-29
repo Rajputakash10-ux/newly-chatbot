@@ -152,38 +152,104 @@ export default function Dashboard() {
           <div className="max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6">
             
             {/* HERO SECTION */}
-            <section className="glass p-6 lg:p-8 rounded-xl" data-tour="hero">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex-1">
-                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">
-                    Welcome to <span className="gradient-text">AI Stock Analysis</span>
+            <section className="relative glass p-8 lg:p-12 rounded-xl overflow-hidden" data-tour="hero">
+              {/* Animated background grid */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: 'linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px)',
+                  backgroundSize: '50px 50px',
+                  animation: 'grid-move 20s linear infinite'
+                }} />
+              </div>
+              
+              <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="flex-1 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--accent)]/10 border border-[var(--accent)]/30 rounded-full mb-4">
+                    <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+                    <span className="text-[10px] font-medium text-[var(--accent)] tracking-wider">AI-POWERED INTELLIGENCE</span>
+                  </div>
+                  
+                  <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
+                    Your AI-Powered
+                    <br />
+                    <span className="gradient-text">Stock Market Mentor</span>
                   </h2>
-                  <p className="text-sm text-[var(--muted)] mb-4">
-                    Get real-time market insights, learn trading concepts, and make informed decisions with AI assistance.
+                  
+                  <p className="text-base text-[var(--muted)] mb-6 leading-relaxed">
+                    Learn trading concepts, analyze markets in real-time, and build confidence with personalized AI guidance designed for beginners.
                   </p>
-                  <div className="flex flex-wrap gap-3">
-                    <button className="px-6 py-2.5 bg-[var(--accent)] text-black font-bold text-sm rounded-lg hover:shadow-[0_0_20px_var(--accent)] transition-all">
-                      Start Analysis
+                  
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    <button className="group px-8 py-3 bg-gradient-to-r from-[var(--accent)] to-[var(--magenta)] text-white font-bold text-sm rounded-lg hover:shadow-[0_0_30px_var(--accent)] transition-all relative overflow-hidden">
+                      <span className="relative z-10">Start Learning</span>
+                      <div className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform" />
                     </button>
-                    <button className="px-6 py-2.5 border border-[var(--border)] text-[var(--text)] text-sm rounded-lg hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all">
-                      Ask AI Assistant
+                    <button className="px-8 py-3 border-2 border-[var(--accent)]/30 text-[var(--text)] text-sm rounded-lg hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all backdrop-blur-sm">
+                      Ask AI Mentor
                     </button>
                   </div>
-                </div>
-                <div className="glass p-4 rounded-lg">
-                  <div className="text-[10px] text-[var(--muted)] mb-2">MARKET STATUS</div>
-                  <div className="space-y-2">
+                  
+                  {/* Quick stats */}
+                  <div className="flex flex-wrap gap-6">
                     {[
-                      { symbol: "NIFTY 50", price: "21,456.30", change: "+1.24%" },
-                      { symbol: "SENSEX", price: "71,234.50", change: "+0.89%" },
-                      { symbol: "BTC", price: "$43,210", change: "+2.15%" }
-                    ].map((item) => (
-                      <div key={item.symbol} className="flex items-center justify-between gap-4">
-                        <span className="text-xs font-medium">{item.symbol}</span>
-                        <span className="text-xs text-[var(--text)]">{item.price}</span>
-                        <span className="text-xs text-[var(--accent2)]">{item.change}</span>
+                      { label: "Active Learners", value: "12K+" },
+                      { label: "AI Insights", value: "50K+" },
+                      { label: "Success Rate", value: "94%" }
+                    ].map((stat) => (
+                      <div key={stat.label}>
+                        <div className="text-xl font-bold text-[var(--accent)]">{stat.value}</div>
+                        <div className="text-[10px] text-[var(--muted)] uppercase tracking-wider">{stat.label}</div>
                       </div>
                     ))}
+                  </div>
+                </div>
+                
+                {/* Live market preview */}
+                <div className="w-full lg:w-auto">
+                  <div className="glass p-6 rounded-xl border border-[var(--accent)]/20 min-w-[280px]">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-2 h-2 rounded-full bg-[var(--accent2)] animate-pulse" />
+                      <span className="text-[10px] font-bold text-[var(--accent2)] tracking-wider">LIVE MARKETS</span>
+                    </div>
+                    <div className="space-y-3">
+                      {[
+                        { symbol: "NIFTY 50", price: "21,456.30", change: "+1.24%", positive: true },
+                        { symbol: "SENSEX", price: "71,234.50", change: "+0.89%", positive: true },
+                        { symbol: "BTC/USD", price: "$43,210", change: "+2.15%", positive: true }
+                      ].map((item) => (
+                        <div key={item.symbol} className="flex items-center justify-between p-2 bg-[var(--panel)]/50 rounded-lg hover:bg-[var(--panel)] transition-all">
+                          <div>
+                            <div className="text-xs font-bold">{item.symbol}</div>
+                            <div className="text-[10px] text-[var(--muted)]">{item.price}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-16 flex items-end gap-0.5">
+                              {[30, 45, 35, 60, 55, 70, 65].map((h, i) => (
+                                <div key={i} className="flex-1 bg-[var(--accent2)]/30 rounded-t" style={{ height: `${h}%` }} />
+                              ))}
+                            </div>
+                            <span className={`text-xs font-bold ${item.positive ? 'text-[var(--accent2)]' : 'text-[var(--red)]'}`}>
+                              {item.change}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* AI preview bubble */}
+                  <div className="mt-4 glass p-4 rounded-xl border border-[var(--magenta)]/20 animate-fade-in">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--magenta)] flex items-center justify-center shrink-0">
+                        <span className="text-sm">🤖</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-[10px] text-[var(--accent)] font-bold mb-1">AI INSIGHT</div>
+                        <div className="text-xs text-[var(--text)] leading-relaxed">
+                          TSLA showing strong bullish momentum. RSI at 68, MACD crossover detected.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
