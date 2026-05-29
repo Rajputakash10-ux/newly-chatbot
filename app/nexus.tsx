@@ -2,10 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import WelcomeAssistant from "./components/WelcomeAssistant";
-import OnboardingSystem from "./components/OnboardingSystem";
-import AILearningAssistant from "./components/AILearningAssistant";
-import SmartTooltip, { INDICATOR_TOOLTIPS } from "./components/SmartTooltip";
 
 type Message = { role: "user" | "assistant"; content: string };
 type AnalysisResult = {
@@ -33,10 +29,6 @@ export default function Nexus() {
     predictive: 88,
   });
   const metricsRef = useRef<HTMLDivElement>(null);
-  
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [onboardingComplete, setOnboardingComplete] = useState(false);
 
   useEffect(() => {
     const tick = () => setTime(new Date().toLocaleTimeString());
@@ -62,13 +54,6 @@ export default function Nexus() {
       localStorage.setItem("nexusSessionId", sid);
     }
     setSessionId(sid);
-    
-    const hasSeenOnboarding = localStorage.getItem("onboardingComplete");
-    if (!hasSeenOnboarding) {
-      setTimeout(() => setShowWelcome(true), 1500);
-    } else {
-      setOnboardingComplete(true);
-    }
   }, []);
 
   useEffect(() => {
@@ -120,23 +105,6 @@ export default function Nexus() {
     }, interval);
   };
 
-  const handleStartTour = () => {
-    setShowWelcome(false);
-    setShowTour(true);
-  };
-
-  const handleSkipOnboarding = () => {
-    setShowWelcome(false);
-    setOnboardingComplete(true);
-    localStorage.setItem("onboardingComplete", "true");
-  };
-
-  const handleTourComplete = () => {
-    setShowTour(false);
-    setOnboardingComplete(true);
-    localStorage.setItem("onboardingComplete", "true");
-  };
-
   const analyzeInput = async () => {
     if (!input.trim() || analyzing) return;
     setAnalyzing(true);
@@ -179,11 +147,8 @@ export default function Nexus() {
 
   return (
     <div className="nexus-container">
-      {showWelcome && <WelcomeAssistant onStartTour={handleStartTour} onSkip={handleSkipOnboarding} />}
-      {showTour && <OnboardingSystem onComplete={handleTourComplete} />}
-      {onboardingComplete && <AILearningAssistant />}
       {/* NAVBAR */}
-      <nav className="nexus-nav" data-tour="navbar">
+      <nav className="nexus-nav">
         <div className="nav-content">
           <div className="nav-left">
             <svg className="logo-hex" viewBox="0 0 100 100">
@@ -256,7 +221,7 @@ export default function Nexus() {
       </section>
 
       {/* DASHBOARD GRID */}
-      <section className="dashboard-grid" ref={metricsRef} data-tour="dashboard">
+      <section className="dashboard-grid" ref={metricsRef}>
         <div className="feed-panel glass-card">
           <div className="panel-header">
             <span className="live-badge">LIVE</span>
@@ -329,7 +294,7 @@ export default function Nexus() {
       </section>
 
       {/* AI CHAT ANALYZER */}
-      <section className="analyzer-section" data-tour="chat">
+      <section className="analyzer-section">
         <h2 className="section-title">
           AI Chat Interface
           <div className="title-glow" />
@@ -402,7 +367,7 @@ export default function Nexus() {
       </section>
 
       {/* MODEL CARDS */}
-      <section className="models-section" data-tour="models">
+      <section className="models-section">
         <h2 className="section-title">Available Models</h2>
         <div className="models-scroll">
           {[
