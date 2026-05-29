@@ -157,7 +157,8 @@ export default function Nexus() {
             <span className="logo-text">NEXUS AI</span>
           </div>
           <div className={`nav-center ${menuOpen ? "open" : ""}`}>
-            <a href="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</a>
+            <a href="/" onClick={() => setMenuOpen(false)}>Dashboard</a>
+            <a href="/guide" onClick={() => setMenuOpen(false)}>Learn Guide</a>
             <a href="/analyzer" onClick={() => setMenuOpen(false)}>Analyzer</a>
             <a href="/trading" onClick={() => setMenuOpen(false)}>Trading</a>
             <a href="/models" onClick={() => setMenuOpen(false)}>Models</a>
