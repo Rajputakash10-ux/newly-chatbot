@@ -9,7 +9,7 @@ type WelcomeAssistantProps = {
 export default function WelcomeAssistant({ onStartTour, onSkip }: WelcomeAssistantProps) {
   const [text, setText] = useState("");
   const [step, setStep] = useState(0);
-  const fullText = "Welcome to NEXUS AI. I'll guide you through the platform and help you understand trading step by step.";
+  const fullText = "Welcome to NEXUS AI Stock Intelligence. I'll guide you through the platform and help you learn stock market analysis step by step.";
 
   useEffect(() => {
     let i = 0;
@@ -36,7 +36,7 @@ export default function WelcomeAssistant({ onStartTour, onSkip }: WelcomeAssista
         </div>
 
         <h2 className="text-2xl font-orbitron font-bold gradient-text mb-4">
-          NEXUS AI ASSISTANT
+          NEXUS AI STOCK ASSISTANT
         </h2>
 
         <p className="text-sm text-[var(--text)] mb-6 min-h-[60px] leading-relaxed">
@@ -45,7 +45,7 @@ export default function WelcomeAssistant({ onStartTour, onSkip }: WelcomeAssista
 
         {text.length >= fullText.length && (
           <div className="space-y-3 animate-fade-in">
-            <p className="text-xs text-[var(--muted)] mb-4">What's your trading experience?</p>
+            <p className="text-xs text-[var(--muted)] mb-4">What's your stock market experience?</p>
             
             <div className="grid grid-cols-3 gap-3 mb-6">
               {["Beginner", "Intermediate", "Advanced"].map((level) => (

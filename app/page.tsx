@@ -1,8 +1,8 @@
-import Nexus from './nexus';
+import Dashboard from './dashboard';
 import './nexus.css';
 
 export default function Home() {
-  return <Nexus />;
+  return <Dashboard />;
 }
 
 

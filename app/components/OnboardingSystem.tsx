@@ -9,10 +9,14 @@ type Step = {
 };
 
 const TOUR_STEPS: Step[] = [
-  { target: "[data-tour='navbar']", title: "Navigation Bar", content: "Access all platform features from here. Dashboard, Analyzer, Trading, Models, Reports, and Settings.", position: "bottom" },
-  { target: "[data-tour='dashboard']", title: "Live Dashboard", content: "Real-time analytics feed showing neural processing, vision analysis, and predictive modeling metrics.", position: "top" },
-  { target: "[data-tour='chat']", title: "AI Chat Interface", content: "Ask NEXUS AI anything about data analysis, predictions, or insights. Get instant AI-powered responses.", position: "top" },
-  { target: "[data-tour='models']", title: "Model Library", content: "Browse and load pre-trained AI models for NLP, Vision, Audio, Code generation, and more.", position: "top" }
+  { target: "[data-tour='sidebar']", title: "Navigation Sidebar", content: "Access all platform features: Home, AI Assistant, Market Analyzer, Learning Hub, Portfolio, Reports, and Settings.", position: "right" },
+  { target: "[data-tour='hero']", title: "Welcome Dashboard", content: "Your central hub for AI-powered stock analysis and market intelligence. Start here to analyze stocks or ask the AI assistant.", position: "bottom" },
+  { target: "[data-tour='market-overview']", title: "Market Overview", content: "Real-time market data showing top gainers, losers, trending stocks, and the Fear & Greed Index.", position: "top" },
+  { target: "[data-tour='ai-assistant']", title: "AI Assistant", content: "Ask questions about stocks, trading concepts, or market analysis. Get instant AI-powered educational responses.", position: "top" },
+  { target: "[data-tour='learning-hub']", title: "Learning Hub", content: "Master trading with structured courses on stock basics, technical analysis, risk management, and more.", position: "top" },
+  { target: "[data-tour='live-analysis']", title: "Live AI Analysis", content: "Real-time AI analysis of stocks with buy/sell signals, confidence scores, and key technical indicators.", position: "top" },
+  { target: "[data-tour='portfolio']", title: "Virtual Portfolio", content: "Practice trading with virtual money. Track your holdings, profit/loss, and get AI recommendations.", position: "left" },
+  { target: "[data-tour='activity']", title: "Activity Feed", content: "Stay updated with market alerts, AI signals, new lessons, and portfolio updates.", position: "left" }
 ];
 
 type OnboardingProps = {
