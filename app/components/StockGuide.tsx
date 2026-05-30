@@ -248,7 +248,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Spread across different sectors",
           "Balance risk and reward"
         ],
-        example: "Portfolio: ₹1,00,000. Max per stock: ₹10,000. Buy 10 different stocks across tech, pharma, banking, etc."
+        example: "Portfolio: $100,000. Max per stock: $10,000. Buy 10 different stocks across tech, pharma, banking, etc."
       },
       {
         id: "stop-loss",
@@ -260,7 +260,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Removes emotion from selling decisions",
           "Adjust as stock price rises (trailing stop)"
         ],
-        example: "Buy at ₹100. Set stop loss at ₹90. If price drops to ₹90, auto-sells. Max loss: ₹10 per share."
+        example: "Buy at $100. Set stop loss at $90. If price drops to $90, auto-sells. Max loss: $10 per share."
       },
       {
         id: "risk-reward",
@@ -272,7 +272,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Higher ratio = better trade setup",
           "Calculate before every trade"
         ],
-        example: "Buy at ₹100, stop loss ₹95 (risk ₹5), target ₹110 (gain ₹10). Risk-Reward = 1:2. Good trade."
+        example: "Buy at $100, stop loss $95 (risk $5), target $110 (gain $10). Risk-Reward = 1:2. Good trade."
       },
       {
         id: "emotions",
@@ -304,7 +304,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Uses technical analysis and charts",
           "High risk - not for beginners"
         ],
-        example: "Buy TSLA at ₹240 at 10 AM. Sell at ₹245 at 2 PM. Profit: ₹5 per share. Repeat multiple times daily."
+        example: "Buy TSLA at $240 at 10 AM. Sell at $245 at 2 PM. Profit: $5 per share. Repeat multiple times daily."
       },
       {
         id: "swing-trading",
@@ -316,7 +316,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Less stressful than day trading",
           "Good for part-time traders"
         ],
-        example: "Stock at ₹150 breaks resistance. Buy and hold for 1 week. Sell at ₹165. Profit: ₹15 per share."
+        example: "Stock at $150 breaks resistance. Buy and hold for 1 week. Sell at $165. Profit: $15 per share."
       },
       {
         id: "long-term",
@@ -328,7 +328,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Ignore short-term volatility",
           "Benefit from compound growth"
         ],
-        example: "Buy Apple at ₹150 in 2020. Hold through ups and downs. Sell at ₹300 in 2024. 100% return + dividends."
+        example: "Buy Apple at $150 in 2020. Hold through ups and downs. Sell at $300 in 2024. 100% return + dividends."
       },
       {
         id: "value-investing",
@@ -340,7 +340,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Requires patience",
           "Focus on margin of safety"
         ],
-        example: "Company worth ₹200 per share trading at ₹120 due to temporary bad news. Value investor buys, waits for market to recognize true value."
+        example: "Company worth $200 per share trading at $120 due to temporary bad news. Value investor buys, waits for market to recognize true value."
       }
     ]
   },
@@ -353,11 +353,11 @@ const STOCK_GUIDE: GuideSection[] = [
       {
         id: "market-cap",
         title: "Market Capitalization",
-        content: "Market cap = Stock Price × Total Shares. Categorized as Large-cap (>₹20,000 Cr), Mid-cap (₹5,000-20,000 Cr), Small-cap (<₹5,000 Cr). Larger caps are generally more stable.",
+        content: "Market cap = Stock Price × Total Shares. Categorized as Large-cap (>$10B), Mid-cap ($2B-$10B), Small-cap (<$2B). Larger caps are generally more stable.",
         keyPoints: [
-          "Large-cap: Stable, lower growth",
-          "Mid-cap: Balanced risk-reward",
-          "Small-cap: High risk, high growth potential",
+          "Large-cap: Stable, lower growth (>$10B)",
+          "Mid-cap: Balanced risk-reward ($2B-$10B)",
+          "Small-cap: High risk, high growth (<$2B)",
           "Diversify across all three"
         ],
         example: "Reliance (Large-cap): Stable, 10-15% annual growth. Small pharma company (Small-cap): Volatile, potential 50%+ growth or loss."
@@ -372,7 +372,7 @@ const STOCK_GUIDE: GuideSection[] = [
           "Dividend Yield = Annual dividend ÷ Price",
           "Good for income investors"
         ],
-        example: "Stock at ₹100 pays ₹5 annual dividend. Yield = 5%. You own 100 shares = ₹500 annual passive income."
+        example: "Stock at $100 pays $5 annual dividend. Yield = 5%. You own 100 shares = $500 annual passive income."
       },
       {
         id: "sectors",
